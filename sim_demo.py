@@ -12,7 +12,7 @@ from skimage.measure import compare_ssim
 
 IMAGE_BASE = '/home/ubuntu/artificio/similar_images_TL/db'
 IMAGE_SIZE = 100
-NUM_TARGETS = 1000
+TOP_N = 3
 
 file_list = os.listdir(IMAGE_BASE)
 fn_list = []
@@ -72,15 +72,15 @@ def compare_many(fn_list):
         # ssim: higher means more similar, 1 means perfect match
         sorted_by_ssim = sorted(scores.items(), key=lambda kv: -kv[1][2])
 
-        print(src)
+        print('src = {}'.format(src))
         print('by costine distance')
-        for kv in sorted_by_cosine_dist[:10]:
+        for kv in sorted_by_cosine_dist[:TOP_N]:
             print_result(kv)
         print('by mean squared error')
-        for kv in sorted_by_mse[:10]:
+        for kv in sorted_by_mse[:TOP_N]:
             print_result(kv)
         print('by structrual sim')
-        for kv in sorted_by_ssim[:10]:
+        for kv in sorted_by_ssim[:TOP_N]:
             print_result(kv)
     
     stop = timeit.default_timer()
