@@ -21,14 +21,13 @@ def load_image(img_id):
 
 def consine_dist(img1, img2):
     def L2_normalize(image):
-        image -= 128.0
         # convert to unit vector by L2 norm
-        image /= math.sqrt(numpy.linalg.norm(image, ord=2))
-        return image
+        r = image / math.sqrt(numpy.linalg.norm(image, ord=2))
+        return r
 
-    img1 = L2_normalize(img1)
-    img2 = L2_normalize(img2)
-    return spatial.distance.cosine(img1, img2)
+    n_img1 = L2_normalize(img1)
+    n_img2 = L2_normalize(img2)
+    return spatial.distance.cosine(n_img1, n_img2)
 
 def mse(img1, img2):
     # the 'Mean Squared Error' between the two images is the
