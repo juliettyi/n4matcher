@@ -8,11 +8,13 @@ class GenAll(object):
 
     Assumes src_dir does not have sub_dir.
   '''
-  def __init__(self, src_dir):
+  def __init__(self, src_dir, n=0):
     self._src_dir = src_dir
     all_fn = os.listdir(src_dir)
     # only process files, not dirs.
-    self._fn_list = [f for f in all_fn if os.path.isfile(os.path.join(src_dir, f))]
+    self._fn_list = sorted([f for f in all_fn if os.path.isfile(os.path.join(src_dir, f))])
+    if n > 0:
+        self._fn_list = self._fn_list[:n]
     self._fg = FeatureGen()
 
   def gen_features(self):
