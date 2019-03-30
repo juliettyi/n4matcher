@@ -1,9 +1,0 @@
-import keras
-import tensorflow
-
-class FeatureGen(object):
-    '''Generate feature for images.'''
-    def __init__(self):
-        self.load_model()
-
-    def load_model(self):
