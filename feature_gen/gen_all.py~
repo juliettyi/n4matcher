@@ -1,0 +1,14 @@
+import os
+from feature import FeatureGen
+
+class GenAll(object):
+  '''Generate feature for all files under one dir.
+
+    Assumes src_dir does not have sub_dir.
+  '''
+  def __int__(self, src_dir):
+      self._src_dir = src_dir
+      all_fn = os.listdir(src_dir)
+      # only process files, not dirs.
+      self._fn_list = [f for f in all_fn if os.path.isfile(os.path.joun(src_dir, f))]
+      
