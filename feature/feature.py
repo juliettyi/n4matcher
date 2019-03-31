@@ -2,13 +2,26 @@ from keras.applications.vgg16 import preprocess_input
 from keras.applications.vgg16 import VGG16
 from keras.models import Model
 from keras.preprocessing import image
+
+import math
 import numpy as np
+
+
+def get_feature(model, x):
+  '''get feature from model(x).'''
+  def L2_normalize(f):
+    # convert to unit vector by L2 norm
+    return f / math.sqrt(np.linalg.norm(f.reshape(-1), ord=2))
+  return L2_normalize(model.predict(x))
 
 
 class FeatureGen(object):
   '''Generate feature for images.'''
-  def __init__(self):
-    self.load_model()
+  def __init__(self, model=None):
+    if not model:
+      self.load_model()
+    else:
+      self._model = model
 
   def load_model(self):
     self._model = VGG16(weights='imagenet', include_top=False)
@@ -25,7 +38,7 @@ class FeatureGen(object):
     # simulate batch size of 1
     x = np.expand_dims(x, axis=0)
     x = preprocess_input(x)
-    features = self._model.predict(x)
+    features = get_feature(self._model, x)
     return features.reshape(-1)
 
   def gen_n_features(self, img_paths):
@@ -39,25 +52,7 @@ class FeatureGen(object):
 
   def gen_feature_for_batch(self, inp):
     x = preprocess_input(inp)
-    features = self._model.predict(x)
+    features = get_feature(self._model, x)
     return features.reshape([features.shape[0], -1])
 
 
-class FeatureGen4K(object):
-  '''Generate 4K feature for images.'''
-  def __init__(self):
-    self.load_model()
-
-  def load_model(self):
-    base_model = VGG16(weights='imagenet')
-    self.model = Model(inputs=base_model.input, outputs=base_model.get_layer('fc2').output) 
-
-  def gen_feature(self, img_path):
-    img = image.load_img(img_path, target_size=(224, 224))
-    x = image.img_to_array(img)
-    x = np.expand_dims(x, axis=0)
-    x = preprocess_input(x)
-    features = self.model.predict(x)
-    return features.reshape(-1)
-
-  
