@@ -22,6 +22,7 @@ class GenAll(object):
     features = []
     idx_to_fn = {}
     fn_to_idx = {}
+    start = timeit.default_timer()
     print('{} files to process'.format(len(self._fn_list)))
     for idx, f in enumerate(self._fn_list):
       feature = self._fg.gen_feature(os.path.join(self._src_dir, f))

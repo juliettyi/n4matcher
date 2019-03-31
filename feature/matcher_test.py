@@ -1,4 +1,4 @@
 from matcher import Matcher
 
-m = Matcher('./')
-m.match_file('./test_imgs/00002.png', top_n=2)
+m = Matcher('./1K4k/')
+m.match_file('./test_imgs/cat.jpg', top_n=5)

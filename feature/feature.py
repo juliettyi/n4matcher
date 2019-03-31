@@ -24,7 +24,9 @@ class FeatureGen(object):
     x = self.load_img(img_path)
     # simulate batch size of 1
     x = np.expand_dims(x, axis=0)
-    return self.gen_feature_for_batch(x)
+    x = preprocess_input(x)
+    features = self._model.predict(x)
+    return features.reshape(-1)
 
   def gen_n_features(self, img_paths):
     '''Generate feature for many images at the same time.'''
@@ -56,6 +58,6 @@ class FeatureGen4K(object):
     x = np.expand_dims(x, axis=0)
     x = preprocess_input(x)
     features = self.model.predict(x)
-    return features.reshape([-1])
+    return features.reshape(-1)
 
   

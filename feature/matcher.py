@@ -14,7 +14,7 @@ class Matcher(object):
       self._id_to_fn = json.load(f)
     with open(os.path.join(feature_dir, FN_TO_ID)) as f:
       self._fn_to_id = json.load(f)
-    self._features = numpy.load(os.path.join(FEATURE_FN))
+    self._features = numpy.load(os.path.join(feature_dir, FEATURE_FN))
     self._fg = FeatureGen()
 
   def match(self, feature, top_n=5):
