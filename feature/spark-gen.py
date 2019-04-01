@@ -35,7 +35,7 @@ if DEBUG:
   # CHUNK_SIZE = 50
 else:
   IMAGE_DIR = '/home/ubuntu/efs/imagenet/'
-  CHUNK_SIZE = 50000
+  CHUNK_SIZE = 10000
 
 def get_4k_model():
   base_model = VGG16(weights='imagenet')

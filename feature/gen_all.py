@@ -8,14 +8,16 @@ from feature import FeatureGen
 class GenAll(object):
   '''Generate feature for all files under one dir.
   '''
-  def __init__(self, src_dir, n=0):
+  def __init__(self, src_dir, start=0, end=0):
     self._src_dir = src_dir
     all_fn = os.listdir(src_dir)
-    # only process files, not dirs.
     self._fn_list = sorted([f for f in all_fn if os.path.isfile(os.path.join(src_dir, f))])
-    # take top n if specified.
-    if n > 0:
-        self._fn_list = self._fn_list[:n]
+    # take range if specified.
+    if start > 0 or end > 0:
+      if end > 0:
+        self._fn_list = self._fn_list[start:end]
+      else:
+        self._fn_list = self._fn_list[start:]
     self._fg = FeatureGen()
 
   def gen_features(self):
