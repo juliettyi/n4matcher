@@ -23,13 +23,19 @@ import sys
 
 
 MODEL_FILE = '/tmp/vgg16.h5'
-# IMAGE_DIR = '/home/ubuntu/efs/imagenet/'
-IMAGE_DIR = '/home/ubuntu/efs/sampleimage'
-DEBUG = False
+# where to store outputs
+RESULT_DIR = 'result'
+# print more info
+DEBUG = True
 if DEBUG:
-  IMAGE_DIR = '/home/ubuntu/efs/imagenet_sample1500/'
-  # IMAGE_DIR = '/home/ubuntu/efs/sampleimage'
-
+  IMAGE_DIR = '/home/ubuntu/efs/sampleimage'
+  CHUNK_SIZE = 5
+  # Slightly bigger samples
+  # IMAGE_DIR = '/home/ubuntu/efs/imagenet_sample1500/'
+  # CHUNK_SIZE = 50
+else:
+  IMAGE_DIR = '/home/ubuntu/efs/imagenet/'
+  CHUNK_SIZE = 50000
 
 def get_4k_model():
   base_model = VGG16(weights='imagenet')
@@ -50,30 +56,57 @@ class ReadImageAndProcess(Transformer):
   def _transform(self, dataset):
     def f(s):
       features = self._fg.gen_feature(s)
-      if DEBUG:
-        print(features.shape)
-        print(np.count_nonzero(features))
-        print(features)
       return features.tolist()
   
     t = ArrayType(StringType())
     in_col = dataset[self._inputCol]
     return dataset.withColumn(self._outputCol, udf(f, t)(in_col))
-    
 
-spark = SparkSession.builder.master('local').appName('spark-feature-gen').getOrCreate()
+# MASTER_ADDR = 'local[4]'
+MASTER_ADDR = 'spark://10.0.0.7:7077'
+spark = SparkSession.builder.master(MASTER_ADDR).appName('spark-feature-gen').getOrCreate()
+sc = spark.sparkContext
+# add local py files
+sc.addPyFile('feature.py')
+sc.addPyFile('image.py')
 
 model = get_model()
 model.save(MODEL_FILE)
 
-files = [os.path.abspath(os.path.join(IMAGE_DIR, f))
-         for f in os.listdir(IMAGE_DIR)]
+files = sc.parallelize([os.path.abspath(os.path.join(IMAGE_DIR, f))
+         for f in os.listdir(IMAGE_DIR)])
 fn_df = spark.createDataFrame(files, StringType()).toDF('fn')
+fn_df.show()
 print('generate feature for {} images.'.format(fn_df.count()))
 
 processor = ReadImageAndProcess(inputCol='fn', outputCol='feature', model=model)
-features = processor.transform(fn_df)
-print('{} features generated.'.format(features.count()))
 
+batch_count = (fn_df.count() // CHUNK_SIZE) + 1
+total = 0
 
+for idx in range(batch_count):
+  output_fn = 'feature_%.5d_of_%.5d' % (idx, batch_count)
+  print(output_fn)
 
+  s = fn_df.limit(CHUNK_SIZE)
+  fn_df.subtract(s)
+
+  features = processor.transform(s)
+  features.show()
+
+  total += features.count()
+
+  fn_list = []
+  feature_list = []
+  for row in features.rdd.collect():
+    fn_list.append(row['fn'])
+    feature_list.append(np.asarray(row['feature']))
+
+  feature_tensor = np.stack(feature_list, axis=0)
+  print(feature_tensor.shape)
+  np.save(os.path.join(RESULT_DIR, output_fn + '.tensor'), feature_tensor)
+  with open(os.path.join(RESULT_DIR, output_fn + '.map'), 'w') as f:
+    json.dump(fn_list, f)
+
+print('{} features generated.'.format(total))
+sc.stop()
