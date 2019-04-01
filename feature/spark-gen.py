@@ -23,10 +23,12 @@ import sys
 
 
 MODEL_FILE = '/tmp/vgg16.h5'
-IMAGE_DIR = '/home/ubuntu/efs/imagenet_sample1500/'
+# IMAGE_DIR = '/home/ubuntu/efs/imagenet/'
+IMAGE_DIR = '/home/ubuntu/efs/sampleimage'
 DEBUG = False
 if DEBUG:
-  IMAGE_DIR = '/home/ubuntu/efs/sampleimage'
+  IMAGE_DIR = '/home/ubuntu/efs/imagenet_sample1500/'
+  # IMAGE_DIR = '/home/ubuntu/efs/sampleimage'
 
 
 def get_4k_model():
@@ -59,7 +61,7 @@ class ReadImageAndProcess(Transformer):
     return dataset.withColumn(self._outputCol, udf(f, t)(in_col))
     
 
-spark = SparkSession.builder.master('local').appName('test').getOrCreate()
+spark = SparkSession.builder.master('local').appName('spark-feature-gen').getOrCreate()
 
 model = get_model()
 model.save(MODEL_FILE)
@@ -67,10 +69,11 @@ model.save(MODEL_FILE)
 files = [os.path.abspath(os.path.join(IMAGE_DIR, f))
          for f in os.listdir(IMAGE_DIR)]
 fn_df = spark.createDataFrame(files, StringType()).toDF('fn')
-fn_df.show()
-print(fn_df.count())
+print('generate feature for {} images.'.format(fn_df.count()))
+
 processor = ReadImageAndProcess(inputCol='fn', outputCol='feature', model=model)
 features = processor.transform(fn_df)
-features.show()
-print(features.count())
+print('{} features generated.'.format(features.count()))
+
+
 

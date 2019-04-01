@@ -1,8 +1,9 @@
 from keras.applications.vgg16 import preprocess_input
 from keras.applications.vgg16 import VGG16
 from keras.models import Model
-from keras.preprocessing import image
-
+# This introduces dependencies on scipy, which is VERY hard to support by lambda.
+# from keras.preprocessing import image
+import image
 import math
 import numpy as np
 
