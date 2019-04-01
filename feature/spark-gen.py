@@ -26,7 +26,7 @@ MODEL_FILE = '/tmp/vgg16.h5'
 # where to store outputs
 RESULT_DIR = 'result'
 # print more info
-DEBUG = True
+DEBUG = False
 if DEBUG:
   IMAGE_DIR = '/home/ubuntu/efs/sampleimage'
   CHUNK_SIZE = 5
@@ -88,9 +88,12 @@ for idx in range(batch_count):
   output_fn = 'feature_%.5d_of_%.5d' % (idx, batch_count)
   print(output_fn)
 
+  # Split all file names into CHUNK_SIZEs
   s = fn_df.limit(CHUNK_SIZE)
+  # Remove from original list.
   fn_df.subtract(s)
 
+  # Generate feature for the chunk.
   features = processor.transform(s)
   features.show()
 
