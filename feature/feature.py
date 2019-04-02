@@ -1,12 +1,12 @@
 from keras.applications.vgg16 import preprocess_input
 from keras.applications.vgg16 import VGG16
 from keras.models import Model
-# This introduces dependencies on scipy, which is VERY hard to support by lambda.
-# from keras.preprocessing import image
-import image
 import math
 import numpy as np
 
+# This introduces dependencies on scipy, which is VERY hard to support by lambda.
+# from keras.preprocessing import image
+import image
 
 def get_feature(model, x):
   '''get feature from model(x).'''

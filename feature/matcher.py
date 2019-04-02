@@ -1,5 +1,5 @@
-from constants import *
-from feature import FeatureGen
+from .constants import *
+from .feature import FeatureGen
 
 import json
 import numpy
@@ -22,8 +22,11 @@ class Matcher(object):
     print(r.shape)
     r = r.reshape([-1])
     ind = numpy.argpartition(r, -top_n)[-top_n:]
+    top = {}
     for i in ind:
       print('{}, score: {}'.format(self._id_to_fn[str(i)], r[i]))
+      top[self._id_to_fn[str(i)]] = r[i]
+    return top
 
   def match_file(self, fn, top_n=5):
     feature = self._fg.gen_feature(fn)
