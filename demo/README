@@ -1,0 +1,8 @@
+producer.py, consumer.py - read air quality data and stream based on time.
+sim.py, sim_demo.py - compare basic methods of image similarity
+simple_producer, simple_consumer, simple_reducer - produce data, consumed by multiple consumers, and summarize by reducer
+  - to start 1 producer and 3 consumers:
+    python3 simple_producer.py & python3 simple_consumer.py --id=1 & python3 simple_consumer.py --id=2 & python3 simple_consumer.py --id=3 &
+  - start reducer in a different terminal
+    python3 simple_reducer.py 
+spark-pi - calculate pi in spark
