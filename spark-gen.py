@@ -7,7 +7,7 @@ from keras.applications.vgg16 import preprocess_input
 from keras.models import Model
 from keras.preprocessing.image import img_to_array, load_img
 
-from feature.feature import FeatureGen
+from .feature.feature import FeatureGen
 
 from pyspark.ml import Transformer
 from pyspark.ml.image import ImageSchema
@@ -26,7 +26,7 @@ MODEL_FILE = '/tmp/vgg16.h5'
 # where to store outputs
 RESULT_DIR = 'result'
 # print more info
-DEBUG = False
+DEBUG = True
 if DEBUG:
   IMAGE_DIR = '/home/ubuntu/efs/sampleimage'
   CHUNK_SIZE = 5

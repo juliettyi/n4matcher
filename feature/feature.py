@@ -6,13 +6,13 @@ import numpy as np
 
 # This introduces dependencies on scipy, which is VERY hard to support by lambda.
 # from keras.preprocessing import image
-import image
+from . import image
 
 def get_feature(model, x):
   '''get feature from model(x).'''
   def L2_normalize(f):
     # convert to unit vector by L2 norm
-    return f / math.sqrt(np.linalg.norm(f.reshape(-1), ord=2))
+    return f / np.linalg.norm(f.reshape(-1))
   return L2_normalize(model.predict(x))
 
 
