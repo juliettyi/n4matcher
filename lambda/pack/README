@@ -1,0 +1,46 @@
+To update service.py and generate a new pack, simply do
+
+zip -g lambda.zip service.py
+
+service.py is meant to run in the same dir as feature.py and image.py
+
+to test service.py, you can just python3 service.py to invoke the __main__,
+it requries a cat.jpg in the same dir
+
+The following is a quite painful process to create an environment where karea VGG can run in lambda
+
+-----------------------------------------------------------------------------------
+virtualenv p2 --python2
+source p2/bin/activate
+
+# 17.0M
+pip install numpy==1.11.0
+# 23.6M        
+pip install scipy==0.10.1
+# 44.1M
+pip install tensorflow==1.0.0
+# 174KB
+# 2.8M (Thano 1.0.4)
+# 24.8M (scipy 0.14)
+pip install Keras==1.2.0
+# 4.2M
+pip install h5py==2.6.0
+# 2.0M
+pip install pillow
+
+cd p2
+inotifywait -m -e access -o inotifywait.list --format "%w%f" -r ./lib/python2.7/site-packages/ &
+INOTIFY="$!"
+
+# download cat.jpg
+python3 service.py
+
+kill $INOTIFY
+
+# follow @antonpaquin to creat pack.zip
+
+--------------
+reference:
+
+https://ryan-cranfill.github.io/keras-aws-lambda/
+https://medium.com/@antonpaquin/keras-on-lambda-74781797b53

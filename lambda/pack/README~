@@ -1,0 +1,41 @@
+virtualenv p2 --python2
+source p2/bin/activate
+
+# 17.0M
+pip install numpy==1.11.0
+# 23.6M        
+pip install scipy==0.10.1
+# 44.1M
+pip install tensorflow==1.0.0
+# 174KB
+# 2.8M (Thano 1.0.4)
+# 24.8M (scipy 0.14)
+pip install Keras==1.2.0
+# 4.2M
+pip install h5py==2.6.0
+# 2.0M
+pip install pillow
+
+cd p2
+inotifywait -m -e access -o inotifywait.list --format "%w%f" -r ./lib/python2.7/site-packages/ &
+INOTIFY="$!"
+
+# download cat.jpg
+python test.py
+
+kill $INOTIFY
+
+
+
+
+
+find . -name "*.so" | xargs strip
+rm `find . -name "*.pyc"`
+
+
+
+--------------
+reference:
+
+https://ryan-cranfill.github.io/keras-aws-lambda/
+https://medium.com/@antonpaquin/keras-on-lambda-74781797b53
