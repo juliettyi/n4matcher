@@ -7,7 +7,7 @@ from string import Template
 
 
 def write_index(top1_r, top2_r):
-  with open('efs/index.tmpl', 'r') as in_f:
+  with open('/home/ubuntu/efs/index.tmpl', 'r') as in_f:
     src = Template(in_f.read())
     if not top2_r:
       top2_r = top1_r
@@ -22,7 +22,7 @@ def write_index(top1_r, top2_r):
       'v2': str(top2_r[3]),    
      }
     r = src.substitute(d)
-    with open('efs/index.html', 'w') as out_f:
+    with open('/home/ubuntu/efs/index.html', 'w') as out_f:
       out_f.write(r)
 
 top1 = 0.0

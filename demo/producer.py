@@ -12,7 +12,7 @@ fs = s3fs.S3FileSystem()
 # Producer, using json format.
 producer = KafkaProducer(value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 
-with fs.open('ycinsight/measurements-out.csv', 'r') as f:
+with fs.open('ycinsight/safecast/measurements-out.csv', 'r') as f:
   measures = csv.reader(f)
   # skip header
   next(measures, None)
