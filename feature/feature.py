@@ -118,7 +118,8 @@ def get_feature(model, x):
   def L2_normalize(f):
     # convert to unit vector by L2 norm
     return f / np.linalg.norm(f.reshape(-1))
-  return L2_normalize(model.predict(x))
+  # return L2_normalize(model.predict(x))
+  return model.predict(x)
 
 
 class FeatureGen(object):

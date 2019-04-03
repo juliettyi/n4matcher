@@ -92,7 +92,18 @@ def match_file(npy_name):
 
 def process_npy_name(npy_name):
   start = timeit.default_timer()
-  match_file(npy_name)
+  # Note there is a potential race condition between worker and master.
+  # Since worker does not remember whether the npy has been processed,
+  # but merely rely on the existence of the npy file.
+  # The master could got previous processed results and removed the
+  # npy between worker sees the npy and process the npy.
+  # In this scenario, worker should gracefully ignore the npy.
+  # Since the npy can only be removed when master got all answers.
+  try:
+    match_file(npy_name)
+  except botocore.exceptions.ClientError as ce:
+    print('{} gone, master is done handling it.'.format(npy_name))
+    return
   now = timeit.default_timer()
   print('{} secs'.format(now - start))
   
