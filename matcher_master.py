@@ -3,9 +3,9 @@
 Monitor input S3 bucket
 
 - Looks for (fn, fn.npy) pair
-- Read fn.npy and send content as topic to workers
+- Send fn.npy as topic to workers
 - Wait for workers answers
-- Sort all workers answers and write final result to S3
+- Sort all workers answers and write final result to EFS/S3/...
 
 '''
 
@@ -19,11 +19,13 @@ import time
 
 from kafka import KafkaProducer
 
-IN_BUCKET = 'dl-result-yc'
-OUT_BUCKET = 'dl-results-final'
-SRC_BUCKET = 'yc-insight-imagenet'
 WORKER_COUNT = 3
 TOP_N = 10
+
+IN_BUCKET = 'dl-result-yc'
+OUT_BUCKET = 'dl-results-final'
+
+SRC_BUCKET = 'yc-insight-imagenet'
 RESULT_DIR = '/home/ubuntu/efs/matcher/'
 WWW = 'http://ec2-35-167-117-254.us-west-2.compute.amazonaws.com'
 
@@ -47,11 +49,11 @@ def result_to_row(r, img_name):
   line = ['<table><tr>']
   # self.
   link = '{}/efs/matcher/{}.html'.format(WWW, img_name)
-  line.append('<td><a href={}><img class=row_img height=256 width=256 src="https://s3-us-west-2.amazonaws.com'
+  line.append('<td><a href={}><img class=row_img height=224 width=224 src="https://s3-us-west-2.amazonaws.com'
                 '/{}/{}" /></a></td>'.format(link, OUT_BUCKET, img_name))
   # top similar images
   for name,score in r:
-    line.append('<td><img class=row_img height=256 width=256 src="https://s3-us-west-2.amazonaws.com'
+    line.append('<td><img class=row_img height=224 width=224 src="https://s3-us-west-2.amazonaws.com'
                 '/{}/{}" /></td>'.format(SRC_BUCKET, name))
   line.append('</tr></table>')
   return '\n'.join(line)
@@ -133,4 +135,6 @@ def process_bucket():
 print('started...')
 while True:
   process_bucket()
+  # for performance, this line can be commented.
+  # keep it here so that the print out is less busy
   time.sleep(1)

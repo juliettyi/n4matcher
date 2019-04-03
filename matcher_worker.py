@@ -1,6 +1,7 @@
 '''Matcher worker.
 
-Consume topic "compare_request"
+Consume topic "compare_request" 
+  or watch S3 (when kafka option is turned off)
 Find local top N matches
 Store the results to S3
 
@@ -16,6 +17,7 @@ import json
 import numpy
 import os
 import tempfile
+import time
 import timeit
 
 IN_BUCKET = 'dl-result-yc'
@@ -25,6 +27,7 @@ TOP_N = 10
 parser = argparse.ArgumentParser(description='matcher worker')
 parser.add_argument('--id', type=int, default=0, help='id of worker')
 parser.add_argument('--debug', type=int, default=0, help='set to 1 to debug')
+parser.add_argument('--use_kafka', type=int, default=1, help='set to 0 to skip kafka')
 parser.add_argument('--base_dir', type=str,
                     default='/home/ubuntu/efs/feature_index',
                     help='base dir of feature index')
@@ -87,17 +90,33 @@ def match_file(npy_name):
   # send result back
   # producer.send('compare_result', v)
 
+def process_npy_name(npy_name):
+  start = timeit.default_timer()
+  match_file(npy_name)
+  now = timeit.default_timer()
+  print('{} secs'.format(now - start))
+  
+def process_bucket():
+  for o in in_bucket.objects.all():
+    name = o.key
+    if not name.endswith('.npy'):
+      continue
+    process_npy_name(name)
+
 if DEBUG:
   match_file('cat.jpg.npy')
-else:
+elif args.use_kafka:
   consumer = KafkaConsumer('compare_request',
                            value_deserializer=lambda v: json.loads(v.decode('utf-8')))
-  producer = KafkaProducer(value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+  # producer = KafkaProducer(value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 
   for msg in consumer:
     npy_name = msg.value
-    start = timeit.default_timer()
-    match_file(npy_name)
-    now = timeit.default_timer()
-    print('{} secs'.format(now - start))
+    process_npy_name(npy_name)
+else:
+  while True:
+    process_bucket()
+    # for performance, this line can be commented.
+    # keep it here so that the print out is less busy
+    time.sleep(1)
   
