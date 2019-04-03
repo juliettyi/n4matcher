@@ -7,7 +7,7 @@ from keras.applications.vgg16 import preprocess_input
 from keras.models import Model
 from keras.preprocessing.image import img_to_array, load_img
 
-from .feature.feature import FeatureGen
+from feature import FeatureGen
 
 from pyspark.ml import Transformer
 from pyspark.ml.image import ImageSchema
@@ -68,7 +68,6 @@ spark = SparkSession.builder.master(MASTER_ADDR).appName('spark-feature-gen').ge
 sc = spark.sparkContext
 # add local py files
 sc.addPyFile('feature.py')
-sc.addPyFile('image.py')
 
 model = get_model()
 model.save(MODEL_FILE)
