@@ -7,7 +7,7 @@ from keras.applications.vgg16 import preprocess_input
 from keras.models import Model
 from keras.preprocessing.image import img_to_array, load_img
 
-from feature.feature import FeatureGen
+from feature import FeatureGen
 
 from pyspark.ml import Transformer
 from pyspark.ml.image import ImageSchema
@@ -26,13 +26,16 @@ MODEL_FILE = '/tmp/vgg16.h5'
 # where to store outputs
 RESULT_DIR = 'result'
 # print more info
-DEBUG = False
+DEBUG = True
 if DEBUG:
-  IMAGE_DIR = '/home/ubuntu/efs/sampleimage'
-  CHUNK_SIZE = 5
+  # IMAGE_DIR = '/home/ubuntu/efs/sampleimage'
+  # CHUNK_SIZE = 5
   # Slightly bigger samples
   # IMAGE_DIR = '/home/ubuntu/efs/imagenet_sample1500/'
   # CHUNK_SIZE = 50
+  # Bigger samples
+  IMAGE_DIR = '/home/ubuntu/efs/imagenet_sample/'
+  CHUNK_SIZE = 1000
 else:
   IMAGE_DIR = '/home/ubuntu/efs/imagenet/'
   CHUNK_SIZE = 10000
@@ -68,7 +71,6 @@ spark = SparkSession.builder.master(MASTER_ADDR).appName('spark-feature-gen').ge
 sc = spark.sparkContext
 # add local py files
 sc.addPyFile('feature.py')
-sc.addPyFile('image.py')
 
 model = get_model()
 model.save(MODEL_FILE)
