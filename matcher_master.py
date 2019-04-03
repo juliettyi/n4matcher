@@ -13,6 +13,7 @@ import boto3
 import botocore
 import csv
 import json
+import os
 import tempfile
 import time
 
@@ -23,6 +24,8 @@ OUT_BUCKET = 'dl-results-final'
 SRC_BUCKET = 'yc-insight-imagenet'
 WORKER_COUNT = 3
 TOP_N = 10
+RESULT_DIR = '/home/ubuntu/efs/matcher/'
+WWW = 'http://ec2-35-167-117-254.us-west-2.compute.amazonaws.com'
 
 # Producer, using json format for serialization.
 producer = KafkaProducer(value_serializer=lambda v: json.dumps(v).encode('utf-8'))
@@ -32,27 +35,18 @@ s3 = boto3.resource('s3')
 in_bucket = s3.Bucket(IN_BUCKET)
 out_bucket = s3.Bucket(OUT_BUCKET)
 
-def prepend_to_index(r, img_name, img_result_fn):
-  new_row = result_to_row(r, img_name, img_result_fn)
-
+def append_to_index(r, img_name):
+  new_row = result_to_row(r, img_name)
   # save html
-  index = 'index.html'
-  tmp_html = tempfile.NamedTemporaryFile()
-  with open(tmp_html.name, 'w') as f:
+  index = os.path.join(RESULT_DIR, 'index.html')
+  with open(index, 'a') as f:
     f.write(new_row)
 
-    old_html = tempfile.NamedTemporaryFile()
-    out_bucket.download_file(index, old_html.name)
-    with open(old_html.name, 'r') as f2:
-      f.write(f2.read())
-    
-  out_bucket.upload_file(tmp_html.name, index)
-  
 
-def result_to_row(r, img_name, img_result_fn):
+def result_to_row(r, img_name):
   line = ['<table><tr>']
   # self.
-  link = 'http://{}.s3-website-us-west-2.amazonaws.com/{}'.format(OUT_BUCKET, img_result_fn)
+  link = '{}/efs/matcher/{}.html'.format(WWW, img_name)
   line.append('<td><a href={}><img class=row_img height=256 width=256 src="https://s3-us-west-2.amazonaws.com'
                 '/{}/{}" /></a></td>'.format(link, OUT_BUCKET, img_name))
   # top similar images
@@ -111,14 +105,10 @@ def process_file(name):
   for irf in inter_result_files:
     s3.Object(OUT_BUCKET, irf).delete()
   
-  out_fn = '{}.html'.format(img_name)
-  # save html
-  tmp_html = tempfile.NamedTemporaryFile()
-  with open(tmp_html.name, 'w') as f:
+  out_fn = os.path.join(RESULT_DIR, '{}.html'.format(img_name))
+  with open(out_fn, 'w') as f:
     f.write(result_to_html(final_top, img_name))
-  out_bucket.upload_file(tmp_html.name, out_fn)
-  prepend_to_index(final_top, img_name, out_fn)
-  print('Uploaded to {}/{}'.format(OUT_BUCKET, out_fn))
+  append_to_index(final_top, img_name)
 
   
 def process_bucket():
@@ -137,6 +127,7 @@ def process_bucket():
     # clean up
     s3.Object(IN_BUCKET, img_name).delete()
     s3.Object(IN_BUCKET, name).delete()
+    print('{} done.'.format(img_name))
 
 
 print('started...')
