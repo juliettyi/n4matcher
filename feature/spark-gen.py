@@ -28,11 +28,14 @@ RESULT_DIR = 'result'
 # print more info
 DEBUG = True
 if DEBUG:
-  IMAGE_DIR = '/home/ubuntu/efs/sampleimage'
-  CHUNK_SIZE = 5
+  # IMAGE_DIR = '/home/ubuntu/efs/sampleimage'
+  # CHUNK_SIZE = 5
   # Slightly bigger samples
   # IMAGE_DIR = '/home/ubuntu/efs/imagenet_sample1500/'
   # CHUNK_SIZE = 50
+  # Bigger samples
+  IMAGE_DIR = '/home/ubuntu/efs/imagenet_sample/'
+  CHUNK_SIZE = 1000
 else:
   IMAGE_DIR = '/home/ubuntu/efs/imagenet/'
   CHUNK_SIZE = 10000
