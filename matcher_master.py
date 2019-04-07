@@ -38,6 +38,9 @@ in_bucket = s3.Bucket(IN_BUCKET)
 out_bucket = s3.Bucket(OUT_BUCKET)
 
 def append_to_index(r, img_name):
+  ''' r: match result, list of file name and score tuple
+      img_name: source query image
+  '''    
   new_row = result_to_row(r, img_name)
   # save html
   index = os.path.join(RESULT_DIR, 'index.html')
