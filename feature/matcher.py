@@ -1,5 +1,12 @@
-from .constants import *
-from .feature import FeatureGen
+if __package__:
+  from .constants import *
+  from .feature import FeatureGen
+else:
+  from constants import *
+  from feature import FeatureGen
+  
+from scipy.sparse import csr_matrix
+from scipy.sparse import load_npz
 
 import json
 import numpy
@@ -14,11 +21,13 @@ class Matcher(object):
       self._id_to_fn = json.load(f)
     with open(os.path.join(feature_dir, FN_TO_ID)) as f:
       self._fn_to_id = json.load(f)
-    self._features = numpy.load(os.path.join(feature_dir, FEATURE_FN))
+    # self._features = numpy.load(os.path.join(feature_dir, FEATURE_FN))
+    self._features = load_npz(os.path.join(feature_dir, FEATURE_FN))
     self._fg = FeatureGen()
 
   def match(self, feature, top_n=5):
-    r = numpy.matmul(self._features, feature)
+    # r = numpy.matmul(self._features, feature)
+    r = self._features.dot(feature)
     print(r.shape)
     r = r.reshape([-1])
     ind = numpy.argpartition(r, -top_n)[-top_n:]
@@ -30,4 +39,4 @@ class Matcher(object):
 
   def match_file(self, fn, top_n=5):
     feature = self._fg.gen_feature(fn)
-    self.match(feature, top_n=top_n)
+    return self.match(feature, top_n=top_n)
