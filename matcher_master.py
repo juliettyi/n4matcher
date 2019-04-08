@@ -140,4 +140,4 @@ while True:
   process_bucket()
   # for performance, this line can be commented.
   # keep it here so that the print out is less busy
-  time.sleep(1)
+  time.sleep(0.05)
