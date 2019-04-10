@@ -16,14 +16,10 @@ spark = SparkSession(sc)
 from sparkdl.image import imageIO
 from sparkdl import DeepImageFeaturizer
 
-# images_df = imageIO.readImagesWithCustomFn('/home/ubuntu/imagematcher/feature/test_imgs/', decode_f=imageIO.PIL_decode)
-# featurizer = DeepImageFeaturizer(inputCol="image", outputCol="features", modelName="InceptionV3")
-
-df = imageIO.readImagesWithCustomFn('/home/ubuntu/imagematcher/feature/test_imgs/00001.png', decode_f=imageIO.PIL_decode)
-featurizer = DeepImageFeaturizer(inputCol='image', outputCol='features', modelName='ResNet50')
+# to test, use '/home/ubuntu/imagematcher/feature/test_imgs/00001.png'
+df = imageIO.readImagesWithCustomFn('/home/ubuntu/imagematcher/feature/test_imgs/', decode_f=imageIO.PIL_decode)
+featurizer = DeepImageFeaturizer(inputCol="image", outputCol="features", modelName="ResNet50")
 df = featurizer.transform(df)
-
-df.show()
 
 # df['image']: Can't get JDBC type for struct<origin:string,height:int,width:int,nChannels:int,mode:int,data:binary>
 # df['features']: Can't get JDBC type for vector
