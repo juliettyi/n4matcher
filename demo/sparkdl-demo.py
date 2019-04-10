@@ -29,7 +29,14 @@ df.show()
 # df['features']: Can't get JDBC type for vector
 # needs tranform before saving to DB.
 
-df.write.format('jdbc').options(
+from pyspark.sql.functions import udf
+import numpy
+
+# map image column to filename column
+df = df.withColumn('fn', udf(lambda s: s.origin)('image'))
+df = df.withColumn('r', udf(lambda v: numpy.array2string(numpy.array(v.toArray())))('features'))
+# write these 2 columns to DB
+df.select(*('fn', 'r')).write.format('jdbc').options(
     url='jdbc:postgresql://10.0.0.14/spark-test',
     dbtable='resnet50',
     user='spark',
