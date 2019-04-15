@@ -33,12 +33,34 @@ cd p2
 inotifywait -m -e access -o inotifywait.list --format "%w%f" -r ./lib/python2.7/site-packages/ &
 INOTIFY="$!"
 
+# cp test.py, feature.py and test.jpg into p2
 # test.py should not use boto3 functions, since boto3 is already in lambda.
 python test.py
 
 kill $INOTIFY
+deactivate
+
+# cp build.sh to the parent dir of p2
+# in the same dir of build.sh, makedir build
+# and edit ROOT_DIR amd BUILD_PATH to point to p2 and build
+# run build.sh
+# ./build.sh
+
+# cp service.py, feature.py into build
+# python2 service.py should work as intended.
+
+cd build
+zip -r9 lambda.zip *
+mv lambda.zip ..
+cd ..
+aws s3 cp lambda.zip s3://[bucket]/
+
+
 
 # follow @antonpaquin to creat pack.zip
+
+
+
 
 aws s3 cp lambda.zip s3://dl-bundle1
 
