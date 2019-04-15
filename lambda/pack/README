@@ -10,7 +10,9 @@ it requries a cat.jpg in the same dir
 The following is a quite painful process to create an environment where karea VGG can run in lambda
 
 -----------------------------------------------------------------------------------
-virtualenv p2 --python2
+make sure boto3 is installed in python2 outside virtualenv.
+
+virtualenv p2 -p python2
 source p2/bin/activate
 
 # 17.0M
@@ -27,6 +29,7 @@ pip install Keras==1.2.0
 pip install h5py==2.6.0
 # 2.0M
 pip install pillow
+pip install kafka-python
 
 cd p2
 inotifywait -m -e access -o inotifywait.list --format "%w%f" -r ./lib/python2.7/site-packages/ &
