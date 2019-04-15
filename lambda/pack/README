@@ -28,6 +28,7 @@ pip install h5py==2.6.0
 # 2.0M
 pip install pillow
 pip install kafka-python
+# Do NOT install boto3 since it is already in lambda enviroment
 
 cd p2
 inotifywait -m -e access -o inotifywait.list --format "%w%f" -r ./lib/python2.7/site-packages/ &
