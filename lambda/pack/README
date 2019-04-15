@@ -55,15 +55,6 @@ mv lambda.zip ..
 cd ..
 aws s3 cp lambda.zip s3://[bucket]/
 
-
-
-# follow @antonpaquin to creat pack.zip
-
-
-
-
-aws s3 cp lambda.zip s3://dl-bundle1
-
 --------------
 reference:
 
