@@ -28,14 +28,13 @@ pip install h5py==2.6.0
 # 2.0M
 pip install pillow
 pip install kafka-python
-pip install boto3
 
 cd p2
 inotifywait -m -e access -o inotifywait.list --format "%w%f" -r ./lib/python2.7/site-packages/ &
 INOTIFY="$!"
 
-# download cat.jpg
-python3 service.py
+# test.py should not use boto3 functions, since boto3 is already in lambda.
+python test.py
 
 kill $INOTIFY
 
