@@ -10,7 +10,7 @@ it requries a cat.jpg in the same dir
 The following is a quite painful process to create an environment where karea VGG can run in lambda
 
 -----------------------------------------------------------------------------------
-virtualenv p2 --python2
+virtualenv p2 -p python2
 source p2/bin/activate
 
 # 17.0M
@@ -27,19 +27,34 @@ pip install Keras==1.2.0
 pip install h5py==2.6.0
 # 2.0M
 pip install pillow
+pip install kafka-python
+# Do NOT install boto3 since it is already in lambda enviroment
 
 cd p2
 inotifywait -m -e access -o inotifywait.list --format "%w%f" -r ./lib/python2.7/site-packages/ &
 INOTIFY="$!"
 
-# download cat.jpg
-python3 service.py
+# cp test.py, feature.py and test.jpg into p2
+# test.py should not use boto3 functions, since boto3 is already in lambda.
+python test.py
 
 kill $INOTIFY
+deactivate
 
-# follow @antonpaquin to creat pack.zip
+# cp build.sh to the parent dir of p2
+# in the same dir of build.sh, makedir build
+# and edit ROOT_DIR amd BUILD_PATH to point to p2 and build
+# run build.sh
+# ./build.sh
 
-aws s3 cp lambda.zip s3://dl-bundle1
+# cp service.py, feature.py into build
+# python2 service.py should work as intended.
+
+cd build
+zip -r9 lambda.zip *
+mv lambda.zip ..
+cd ..
+aws s3 cp lambda.zip s3://[bucket]/
 
 --------------
 reference:

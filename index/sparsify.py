@@ -1,4 +1,4 @@
-# from constants import *
+'''Convert all feature index npy to sparse npz.'''
 from scipy.sparse import csr_matrix
 from scipy.sparse import save_npz
 
@@ -16,7 +16,7 @@ class Sparsify(object):
     print('sparsify {}'.format(self._features.shape))
     sparse = csr_matrix(self._features)
     print('shape {}'.format(sparse.shape))
-    save_npz(os.path.join(self._feature_dir, "sparse"), sparse)
+    save_npz(os.path.join(self._feature_dir, 'sparse'), sparse)
 
 
 # BASE = '/home/ubuntu/efs/feature_index'

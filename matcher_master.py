@@ -24,6 +24,7 @@ TOP_N = 10
 
 IN_BUCKET = 'dl-result-yc'
 OUT_BUCKET = 'dl-results-final'
+WWW_BUCKET = 'n4result'
 
 SRC_BUCKET = 'yc-insight-imagenet'
 RESULT_DIR = '/home/ubuntu/efs/matcher/'
@@ -36,16 +37,23 @@ producer = KafkaProducer(value_serializer=lambda v: json.dumps(v).encode('utf-8'
 s3 = boto3.resource('s3')
 in_bucket = s3.Bucket(IN_BUCKET)
 out_bucket = s3.Bucket(OUT_BUCKET)
+www_bucket = s3.Bucket(WWW_BUCKET)
 
-def append_to_index(r, img_name):
+def prepend_to_index(r, img_name):
   ''' r: match result, list of file name and score tuple
       img_name: source query image
   '''    
   new_row = result_to_row(r, img_name)
   # save html
   index = os.path.join(RESULT_DIR, 'index.html')
-  with open(index, 'a') as f:
-    f.write(new_row)
+  if os.path.exists(index):
+    with open(index, 'r') as f:
+      data = f.read()
+  else:
+    data = ''
+  with open(index, 'w+') as f:
+    f.write(new_row + '\n' + data)
+  www_bucket.upload_file(index, 'index.html', ExtraArgs={'ContentType': 'text/html', 'ACL': 'public-read'})
 
 
 def result_to_row(r, img_name):
@@ -109,11 +117,13 @@ def process_file(name):
   # clean up intermediate json files
   for irf in inter_result_files:
     s3.Object(OUT_BUCKET, irf).delete()
-  
-  out_fn = os.path.join(RESULT_DIR, '{}.html'.format(img_name))
+ 
+  s3_fn = '{}.html'.format(img_name) 
+  out_fn = os.path.join(RESULT_DIR, s3_fn)
   with open(out_fn, 'w') as f:
     f.write(result_to_html(final_top, img_name))
-  append_to_index(final_top, img_name)
+  www_bucket.upload_file(out_fn, s3_fn, ExtraArgs={'ContentType': 'text/html', 'ACL': 'public-read'})
+  prepend_to_index(final_top, img_name)
 
   
 def process_bucket():

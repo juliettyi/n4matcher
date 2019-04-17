@@ -1,4 +1,4 @@
-# imagematcher
+# N⁴ Matcher (Neural network nearest neighbor matcher)
 
 ## Motivation/Application
 

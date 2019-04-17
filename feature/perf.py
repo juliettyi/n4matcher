@@ -29,8 +29,31 @@ start = timeit.default_timer()
 for _ in range(100):
     r = sparse.dot(test)
 end = timeit.default_timer()
-idx = str(numpy.argmax(r))
 print('sparse dot {} secs'.format(end - start))
+start = timeit.default_timer()
+idx = str(numpy.argmax(r))
+end = timeit.default_timer()
+print('time to calculate argmax {} secs'.format(end - start))
+
+start = timeit.default_timer()
+idx1 = numpy.argpartition(r, -10)
+end = timeit.default_timer()
+print('time to calculate argpartions {} secs'.format(end - start))
+
+start = timeit.default_timer()
+idx2 = numpy.argsort(r)
+end = timeit.default_timer()
+print('time to calculate argsort {}'. format(end - start))
+
+start = timeit.default_timer()
+idx3 = sorted(r)
+end = timeit.default_timer()
+print('time to sort {}'.format(end - start))
+
+
+
+
+
 print('result is {}'.format(id_to_fn[idx]))
 
 print('loading 20K dense feature index')

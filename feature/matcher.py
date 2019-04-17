@@ -1,3 +1,6 @@
+# this syntax allow matcher.py to be imported from
+# both current dir like: from matcher import Matcher
+# and upper dir like: from feature.matcher import Matcher
 if __package__:
   from .constants import *
   from .feature import FeatureGen
