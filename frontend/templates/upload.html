@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Neural Network Nearest Neighbor Match</title>
+
+<style>
+a.disabled { color: gray; }
+</style>
+
+<script>
+</script>		
+
+</head>
+
+<body>
+<div id='header'>
+<p>Welcome to Neural Network Nearest Neighbor Match!</p>
+<p>Please upload your images. </p>
+</div>
+
+<div id='msg'>
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+</div>
+	    
+{% if filenames %}
+<div id='result'>
+<p>uploads:
+{% for local, s3, ready in filenames %}
+<br>{{local}} uploaded as {{s3}}
+{% endfor %}
+
+<p>match results:
+{% for local, s3, ready in filenames %}
+<br><a class=result target=blank
+  {% if ready %}
+    href='https://s3-us-west-2.amazonaws.com/n4result/{{s3}}.html'
+    {# href='http://ec2-35-167-117-254.us-west-2.compute.amazonaws.com/efs/matcher/{{s3}}.html' #}
+  {% else %}	    
+    href='/result/{{s3}}'
+  {% endif %}
+>{{local}}</a>
+{% endfor %}
+</div>
+
+<div id='preview'>
+</div>
+
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data" action=".">
+    {{ form.csrf_token }}
+    {{ form.images }}
+    <input type="submit" value="Go">
+</form>
+
+<p><a target=blank href="https://s3-us-west-2.amazonaws.com/n4result/index.html">Result Summary page</a>
+<br><a target=blank href="https://github.com/juliettyi/n4matcher">GitHub</a></p>
+
+<!-- <a href="http://ec2-35-167-117-254.us-west-2.compute.amazonaws.com">Result Summary page</a> -->
+{#
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="{{
+  url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+
+<script>
+  $(document).ready(function(){
+  $("a.result").hover(function(){
+    //When a given link (<a> tag) is hovered over
+    $("#preview").load(this.href).fadeIn(); //load the src of that tag into a given div container.
+    });
+  });
+</script>
+#}
+</body>
+</html>
