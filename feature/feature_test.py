@@ -10,6 +10,7 @@ def batch_size_1():
   start = timeit.default_timer()
   feature = fg.gen_feature(os.path.join('test_imgs', '00001.png'))
   print(feature.shape)
+  print('array: ', np.array2string(feature))
   now = timeit.default_timer()
   print('{} secs'.format(now - start))
 
