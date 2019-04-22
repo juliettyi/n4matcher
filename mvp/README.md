@@ -9,5 +9,6 @@ for 50K images did not pass (the index size is ~800MB)
 To run the MVP demo:
 
 pip3 install -r requirements.txt
+
 python3 main.py
 
