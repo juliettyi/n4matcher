@@ -6,7 +6,7 @@ import timeit
 
 print('Loading feature index for 1,000 images, please wait...')
 start = timeit.default_timer()
-m = Matcher('./1K/')
+m = Matcher('./50K/')
 fg = FeatureGen()
 end = timeit.default_timer()
 index_load_time = end - start
