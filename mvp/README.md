@@ -5,10 +5,16 @@ send them to matcher and get top 10 matches.
 To run the MVP demo:
 
 One time setup:
+
 pip3 install -r requirements.txt
+
+
 cd 50K
+
+
 cat x* > sparse.npz
 
 Run mvp demo:
+
 python3 main.py
 
