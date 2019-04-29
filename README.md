@@ -10,6 +10,8 @@
 
 ## Serving Stack / Pipeline
 
+![alt text](https://github.com/juliettyi/n4matcher/blob/master/slides/Scalable%20image%20comparision%20v3.png)
+
 
 
 
