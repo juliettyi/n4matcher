@@ -24,3 +24,9 @@ cd ..
 
 python3 main.py
 
+
+
+An sample output from an aws t2.small EC2:
+index loaded, time used = 15.98753700500015 seconds
+generated features for 15 files, time used = 13.173495285000172 seconds
+matched 15 files, time used = 3.0983668599997145 seconds
