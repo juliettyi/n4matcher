@@ -4,7 +4,7 @@ from matcher import Matcher
 import os
 import timeit
 
-print('Loading feature index for 1,000 images, please wait...')
+print('Loading feature index for 50,000 images, please wait...')
 start = timeit.default_timer()
 m = Matcher('./50K/')
 fg = FeatureGen()
