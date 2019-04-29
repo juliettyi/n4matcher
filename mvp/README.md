@@ -6,6 +6,10 @@ To run the MVP demo:
 
 One time setup:
 
+sudo apt-get update
+
+sudo apt-get -y install python3-pip
+
 pip3 install -r requirements.txt
 
 
@@ -15,6 +19,8 @@ cd 50K
 cat x* > sparse.npz
 
 Run mvp demo:
+
+cd ..
 
 python3 main.py
 
