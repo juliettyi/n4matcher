@@ -42,5 +42,8 @@
   Dense dot takes 18.80secs
   A big speed up
 
+## Slides available here:
+
+https://github.com/juliettyi/n4matcher/blob/master/slides/Scalable%20image%20comparision%20v3.pdf
 
 
