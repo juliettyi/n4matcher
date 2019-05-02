@@ -17,7 +17,7 @@
 
 
 
-## Technical Challenge and solution
+## Technical Challenge and Solution
 
 - For 32x32 image, compare 1 to 1000 takes 1 sec or more
 - Use matrix multiplication to become more efficient
@@ -42,8 +42,11 @@
   Dense dot takes 18.80secs
   A big speed up
 
-## Slides available here:
+## Slides Available Here:
 
 https://github.com/juliettyi/n4matcher/blob/master/slides/Scalable%20image%20comparision%20v3.pdf
 
 
+## MVP Instruction:
+
+https://github.com/juliettyi/n4matcher/tree/master/mvp
