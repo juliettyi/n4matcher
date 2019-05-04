@@ -71,15 +71,17 @@ def main():
              for f in os.listdir(IMAGE_DIR) if os.path.isfile(os.path.join(IMAGE_DIR, f))]
     appname = 'spark_gen_all'
   else:
-    # 150K files each round
-    ROUND = 3
-    # v1: first 150K
-    # v2: second 150K
+    ROUND = 5
+    # v1: first 150K of unshuffled fns
+    # v2: second 150K of unshuffuled fns
+    # v3: 450K shuffled (300K - 750K)
+    # v4: 450K shuffled (750K - 1200K)
+    # v5: remaining (1200K - 1281174)
     # so on...
     TABLE_NAME = 'vgg16v' + str(ROUND)
     # First 300K was not shuffled, the remaining are shuffled.
-    FILE_LIST_START = (ROUND - 3) * 150000
-    FILE_LIST_END = ROUND * 150000
+    FILE_LIST_START = (ROUND - 3) * 450000
+    FILE_LIST_END = (ROUND - 2) * 450000
     files = read_from_file_list(FILE_LIST)
     print('{} file names loaded'.format(len(files)))
     assert len(files) > FILE_LIST_START
