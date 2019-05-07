@@ -46,6 +46,9 @@
 
 https://github.com/juliettyi/n4matcher/blob/master/slides/Scalable%20image%20comparision%20v3.pdf
 
+## Demo video:
+
+https://www.youtube.com/watch?v=o-qtJ835SVs
 
 ## MVP Instruction:
 
